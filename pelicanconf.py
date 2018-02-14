@@ -1,6 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*- #
 from __future__ import unicode_literals
+import datetime
+now = datetime.datetime.now()
+
+YEAR = str(now.year)
+VERSION = 'v1.0.0'
 
 AUTHOR = 'Danyi Lilla'
 SITENAME = 'Danyi Lilla'
@@ -9,8 +14,17 @@ SITEURL = ''
 PATH = 'content'
 
 TIMEZONE = 'Europe/Budapest'
+DEFAULT_DATE_FORMAT = '%a %d %B %Y'
 
 DEFAULT_LANG = 'hu'
+
+THEME = 'themes/bootstrap4'
+
+ARTICLE_SAVE_AS = '{slug}/index.html'
+ARTICLE_URL = '{slug}'
+
+PAGE_SAVE_AS = '{slug}/index.html'
+PAGE_URL = '{slug}'
 
 # Feed generation is usually not desired when developing
 FEED_ALL_ATOM = None

@@ -1,0 +1,4 @@
+/* Hide alerts by default. */
+.alert {
+    display: none;
+}
