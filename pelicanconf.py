@@ -12,6 +12,7 @@ SITENAME = 'Danyi Lilla'
 SITEURL = ''
 
 PATH = 'content'
+DELETE_OUTPUT_DIRECTORY = True
 
 TIMEZONE = 'Europe/Budapest'
 DEFAULT_DATE_FORMAT = '%a %d %B %Y'
@@ -42,6 +43,23 @@ LINKS = (('Pelican', 'http://getpelican.com/'),
 # Social widget
 SOCIAL = (('You can add links in your config file', '#'),
           ('Another social link', '#'),)
+
+PLUGIN_PATHS = ['plugins']
+PLUGINS=['sitemap',]
+
+SITEMAP = {
+    'format': 'xml',
+    'priorities': {
+        'articles': 0.5,
+        'indexes': 0.5,
+        'pages': 0.5
+    },
+    'changefreqs': {
+        'articles': 'daily',
+        'indexes': 'daily',
+        'pages': 'weekly'
+    }
+}
 
 DEFAULT_PAGINATION = 10
 
