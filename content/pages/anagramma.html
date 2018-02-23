@@ -10,45 +10,59 @@
     </head>
     <body>
       <div class="container">
-        <nav>
-          <div class="nav nav-tabs nav-justified" id="nav-tab" role="tablist">
-            <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Tukor</a>
-            <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Karaktercsere</a>
+        <h1>Anagramma</h1>
+        <p class="lead">Olyan szavak, amik visszafele mondva is ertelmesek.</p>
+      </div>
+
+      <div class="container">
+        <div class="row">
+
+          <!-- word collection area -->
+          <div class="col-lg mb-3">
+            <div class="card text-center">
+              <div class="card-header">
+                <h4>
+                  Kivalasztott szavak
+                </h4>
+              </div>
+              <div id="anagram-list" class="card-body text-left"></div>
+              <div class="card-footer">
+                <div class="btn-group" role="group" style="display: flex">
+                    <button class="btn btn-outline-secondary" style="flex: 1"><i class="fas fa-download mr-2"></i>Letoltes</button>
+                    <button class="btn btn-outline-secondary" style="flex: 1"><i class="fas fa-copy mr-2"></i>Vagolapra masolas</button>
+                </div>
+              </div>
+            </div>
           </div>
-        </nav>
-        <div class="tab-content" id="nav-tabContent">
-          <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
-            A
-          </div>
-          <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
-            B
+
+          <!-- two pane anagram selector -->
+          <div class="col-lg">
+
+            <!-- two pane navigation -->
+            <nav class="mb-4">
+              <div class="nav nav-tabs nav-justified" id="nav-tab" role="tablist">
+                <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Tukor</a>
+                <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Karaktercsere</a>
+              </div>
+            </nav>
+
+            <!-- content pages -->
+            <div class="tab-content" id="nav-tabContent">
+
+              <!-- page 1 -->
+              <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                <div id="mirror"></div>
+              </div>
+
+              <!-- page 2 -->
+              <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                <div id="mix"></div>
+              </div>
+
+            </div>
           </div>
         </div>
       </div>
 
-      <section class="container">
-        <h1>Anagramma</h1>
-        <p class="lead">Olyan szavak, amik visszafele mondva is ertelmesek.</p>
-        <div class="row mb-3">
-          <div class="col-md">
-            <ul class="list-group">
-              <li class="list-group-item">Cras justo odio</li>
-              <li class="list-group-item">Dapibus ac facilisis in</li>
-              <li class="list-group-item">Morbi leo risus</li>
-              <li class="list-group-item">Porta ac consectetur ac</li>
-              <li class="list-group-item">Vestibulum at eros</li>
-            </ul>
-          </div>
-          <div class="col-md">
-            <ul class="list-group">
-              <li class="list-group-item">Cras justo odio</li>
-              <li class="list-group-item">Dapibus ac facilisis in</li>
-              <li class="list-group-item">Morbi leo risus</li>
-              <li class="list-group-item">Porta ac consectetur ac</li>
-              <li class="list-group-item">Vestibulum at eros</li>
-            </ul>
-          </div>
-        </div>
-      </section>
     </body>
 </html>
