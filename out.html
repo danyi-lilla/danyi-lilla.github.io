@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title></title>
+  
+	    <meta name="author" content="Tibor Simon" />
+    <meta name="description" content="" />
+	
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <script defer src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
+  <link rel="stylesheet" href="//css/style.css">
+
+</head>
+<body>
+  
+  <nav class="navbar navbar-light bg-light navbar-expand-lg">
+  <div class="container">
+    <a class="navbar-brand" href="">Danyi Lilla</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href="">Home <span class="sr-only">(current)</span></a>
+        </li>
+      </ul>
+      <div class="text-muted">
+        Logopediai segedanyagok
+      </div>
+
+    </div>
+  </div>
+</nav>
+
+  <div class="jumbotron jumbotron-fluid">
+    <div class="container">
+                </div>
+  </div>
+
+  <div class="container">
+  <div class="alert alert-warning alert-dismissible fade show alert-manual-show" id="cookie-alert" role="alert">
+    Az oldalon sutiket (cookies) hasznalunk egyes logopediai eszkozokhoz es az oldal hasznalati statisztikaihoz. Az oldal hasznalataval beleegyezel a sutik hasznalataba. <a href="#" class="alert-link">Tovabbi informaciok</a>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Rendben" title="Rendben">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+</div>
+    
+  <hr>
+
+  <div class="container mb-4 text-secondary">
+  <p class="text-center mt-4 mb-4">&copy; <b>Danyi Lilla</b> </p>
+
+  <p class="text-center">
+    <img src="https://img.shields.io/badge/version-1.0.0-brightgreen.svg">
+    <img src="https://img.shields.io/badge/powered%20by-Pelican-blue.svg"><br>
+    <small>Created by Tibor Simon</small>
+  </p>
+
+  <div class="text-center mb-3" style="line-height: 90%">
+    <small>Az oldal tartalma a <a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/2.5/hu/">Creative Commons Nevezd meg! - Ne add el! - Így add tovább! 2.5</a> licenc feltételeinek megfelelően hasznalhato, kiveve ha az mashogyan jelolve van.</small>
+  </div>
+
+  <div class="text-center">
+    <a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/2.5/hu/"><img alt="Creative Commons Licenc" style="border-width:0; opacity:0.76" src="https://i.creativecommons.org/l/by-nc-sa/2.5/hu/88x31.png" /></a>
+  </div>
+
+</div>
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+  <script>
+    (function(){
+        function setCookie(cname, cvalue, exdays) {
+            let d = new Date();
+            d.setTime(d.getTime() + (exdays*24*60*60*1000));
+            let expires = "expires="+ d.toUTCString();
+            document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+        }
+
+        function getCookie(cname) {
+            let name = cname + "=";
+            let decodedCookie = decodeURIComponent(document.cookie);
+            let ca = decodedCookie.split(';');
+            for(let i = 0; i <ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        }
+
+        const COOKIE_POLICY_COOKIE_NAME = "CookiePolicyAcceptedOn"
+
+        let cookiePolicy = getCookie(COOKIE_POLICY_COOKIE_NAME)
+        if (cookiePolicy == '') {
+            $('#cookie-alert').show()
+            $('#cookie-alert').on('closed.bs.alert', function () {
+                setCookie(COOKIE_POLICY_COOKIE_NAME, Date().toString(), 365)
+            })
+        } else {
+            $('#cookie-alert').remove()
+        }
+    })();
+</script>
+    </body>
+</html>
