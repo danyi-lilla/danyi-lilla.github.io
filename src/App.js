@@ -61,16 +61,13 @@ const Dobokocka = () => {
   );
 }
 
-class Datumok extends React.Component {
+class AgeCalculator extends React.Component {
   constructor({ match, location, history }) {
     super()
     this.state = {
       y: 0,
       m: 0,
-      d: 0,
-      year: 0,
-      month: 0,
-      date: moment().format('YYYY MMM DD')
+      d: 0
     }
   }
 
@@ -100,6 +97,36 @@ class Datumok extends React.Component {
       m,
       d
     })
+  }
+
+  render() {
+    return (
+      <div className="card text-center">
+        <div className="card-header">
+          <h5 className="mb-0">Hany eves jelenleg?</h5>
+        </div>
+        <div className="card-body d-flex justify-content-center">
+          <Datetime viewMode={'years'} timeFormat={false} input={false} onChange={this.dateChanged.bind(this)} ref="datetime" />
+        </div>
+        <div className="card-footer">
+            <button className="btn btn-block btn-light" onClick={this.reload.bind(this)}>
+              <h5 className="mb-0"><span className="badge badge-secondary">{this.state.y}</span> ev <span className="badge badge-secondary ml-2">{this.state.m}</span> honap <span className="badge badge-secondary ml-2">{this.state.d}</span> nap</h5>
+            </button>
+        </div>
+      </div>
+    )
+  }
+
+}
+
+class BirthDateCalculator extends React.Component {
+  constructor({ match, location, history }) {
+    super()
+    this.state = {
+      year: 0,
+      month: 0,
+      date: moment().format('YYYY MMM DD')
+    }
   }
 
   yearInc() {
@@ -141,6 +168,44 @@ class Datumok extends React.Component {
     })
   }
 
+  reset() {
+    this.setState({
+      year: 0,
+      month: 0,
+      date: moment().format('YYYY MMM DD')
+    })
+  }
+
+  render() {
+    return (
+      <div className="card text-center">
+        <div className="card-header">
+          <h5 className="mb-0">Mikor szuletett, hogy ha most..</h5>
+        </div>
+        <div className="card-body d-flex align-items-center justify-content-center">
+          <div className="btn-group-vertical btn-group-lg mr-2" role="group">
+            <button type="button" className="btn btn-primary" onClick={this.yearInc.bind(this)}><i className="fas fa-chevron-up"></i></button>
+            <button type="button" className="btn btn-secandary">{this.state.year} eves</button>
+            <button type="button" className="btn btn-primary" onClick={this.yearDec.bind(this)}><i className="fas fa-chevron-down"></i></button>
+          </div>
+          <div className="btn-group-vertical btn-group-lg" role="group">
+            <button type="button" className="btn btn-primary" onClick={this.monthInc.bind(this)}><i className="fas fa-chevron-up"></i></button>
+            <button type="button" className="btn btn-secandary">{this.state.month} honapos</button>
+            <button type="button" className="btn btn-primary" onClick={this.monthDec.bind(this)}><i className="fas fa-chevron-down"></i></button>
+          </div>
+        </div>
+        <div className="card-footer">
+          <button className="btn btn-block btn-light" onClick={this.reset.bind(this)}>
+            <h5 className="mb-0">{this.state.date}</h5>
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+}
+
+class Datumok extends React.Component {
   render() {
     return (
       <div>
@@ -148,44 +213,8 @@ class Datumok extends React.Component {
 
         <div className="container">
           <div className="card-deck">
-
-            <div className="card text-center">
-              <div className="card-header">
-                <h5 className="mb-0">Hany eves jelenleg?</h5>
-              </div>
-              <div className="card-body d-flex justify-content-center">
-                <Datetime viewMode={'years'} timeFormat={false} input={false} onChange={this.dateChanged.bind(this)} ref="datetime" />
-              </div>
-              <div className="card-footer">
-                  <button className="btn btn-block btn-light" onClick={this.reload.bind(this)}>
-                    <h5 className="mb-0"><span className="badge badge-secondary">{this.state.y}</span> ev <span className="badge badge-secondary ml-2">{this.state.m}</span> honap <span className="badge badge-secondary ml-2">{this.state.d}</span> nap</h5>
-                  </button>
-              </div>
-            </div>
-
-            <div className="card text-center">
-              <div className="card-header">
-                <h5 className="mb-0">Mikor szuletett?</h5>
-              </div>
-              <div className="card-body d-flex align-items-center justify-content-center">
-                <div className="btn-group-vertical btn-group-lg mr-2" role="group">
-                  <button type="button" className="btn btn-light" onClick={this.yearInc.bind(this)}><i className="fas fa-chevron-up"></i></button>
-                  <button type="button" className="btn btn-secondary">{this.state.year} ev</button>
-                  <button type="button" className="btn btn-light" onClick={this.yearDec.bind(this)}><i className="fas fa-chevron-down"></i></button>
-                </div>
-                <div className="btn-group-vertical btn-group-lg" role="group">
-                  <button type="button" className="btn btn-light" onClick={this.monthInc.bind(this)}><i className="fas fa-chevron-up"></i></button>
-                  <button type="button" className="btn btn-secondary">{this.state.month} honap</button>
-                  <button type="button" className="btn btn-light" onClick={this.monthDec.bind(this)}><i className="fas fa-chevron-down"></i></button>
-                </div>
-              </div>
-              <div className="card-footer">
-                <button className="btn btn-block btn-light">
-                  <h5 className="mb-0">{this.state.date}</h5>
-                </button>
-              </div>
-            </div>
-
+            <AgeCalculator />
+            <BirthDateCalculator />
           </div>
         </div>
 
