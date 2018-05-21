@@ -13,7 +13,7 @@ const Home = () => (
 );
 
 const Nav = () => (
-  <nav className="navbar navbar-expand-sm navbar-light bg-light">
+    <nav className="navbar navbar-expand-sm navbar-dark bg-dark">
     <div className="container">
       <Link className="navbar-brand" to="/">Danyi Lilla</Link>
       <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
