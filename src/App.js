@@ -5,78 +5,58 @@ import './Datetime.css';
 import Datetime from 'react-datetime';
 import moment from 'moment';
 
+import AppBar from '@material-ui/core/AppBar';
+import Avatar from '@material-ui/core/Avatar';
+import BottomNavigation from '@material-ui/core/BottomNavigation';
+import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
+import Button from '@material-ui/core/Button';
+import CasinoIcon from '@material-ui/icons/Casino';
+import Chip from '@material-ui/core/Chip';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import EventIcon from '@material-ui/icons/Event';
+import FontDownloadIcon from '@material-ui/icons/FontDownload';
+import Grid from '@material-ui/core/Grid';
+import Icon from '@material-ui/core/Icon';
+import Paper from '@material-ui/core/Paper';
+import PropTypes from 'prop-types';
+import Tab from '@material-ui/core/Tab';
+import Tabs from '@material-ui/core/Tabs';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+import pink from '@material-ui/core/colors/pink';
+import { withStyles  } from '@material-ui/core/styles';
 
-const Home = () => (
-  <div>
-    <h2> Home </h2>
-  </div>
-);
 
-const Nav = () => (
-  <nav className="navbar navbar-expand-sm navbar-light bg-light">
-    <div className="container">
-      <Link className="navbar-brand" to="/">Danyi Lilla</Link>
-      <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span className="navbar-toggler-icon"></span>
-      </button>
+const stringDatesTitle = 'Datumok'
+const stringWordsTitle = 'Szokereso'
+const stringDiceTitle = 'Dobokocka'
 
-      <div className="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul className="navbar-nav mr-auto">
-        <li className="nav-item">
-          <NavLink to='/datumok' className={'nav-link'} activeClassName='active'>Datumok</NavLink>
-        </li>
-        <li className="nav-item">
-          <NavLink to='/szokereso' className={'nav-link'} activeClassName='active'>Szokereso</NavLink>
-        </li>
-        <li className="nav-item">
-          <NavLink to='/dobokocka' className={'nav-link'} activeClassName='active'>Dobokocka</NavLink>
-        </li>
-      </ul>
-      <div className="text-muted d-none d-md-block">
-        Logopediai segedeszkozok
-      </div>
 
-    </div>
-    </div>
-  </nav>
-);
 
-const Jumbotron = (props) => (
-  <div className="jumbotron jumbotron-fluid">
-    <div className="container">
-      <h3>{props.title}</h3>
-    </div>
-  </div>
-);
 
-const Szokereso = () => {
-  return (
-    <Jumbotron title='Szokereso' />
-  );
-}
 
-const Dobokocka = () => {
-  return (
-    <Jumbotron title='Dobokocka' />
-  );
-}
 
-class AgeCalculator extends React.Component {
-  constructor({ match, location, history }) {
-    super()
-    this.state = {
-      y: 0,
-      m: 0,
-      d: 0
-    }
+
+
+class AgeCalculator extends Component {
+  state = {
+    y: 0,
+    m: 0,
+    d: 0,
+    result: false
   }
 
-  reload() {
+  resetPicker() {
     this.refs.datetime.setState({currentView: 'years', selectedDate: undefined})
+    this.resetState()
+  }
+
+  resetState() {
     this.setState({
       y: 0,
       m: 0,
-      d: 0
+      d: 0,
+      result: false
     })
   }
 
@@ -95,24 +75,39 @@ class AgeCalculator extends React.Component {
     this.setState({
       y,
       m,
-      d
+      d,
+      result: true
     })
   }
 
   render() {
+    const { classes } = this.props;
+    const { y, m, d, result } = this.state
+    console.log(this.props)
     return (
-      <div className="card text-center">
-        <div className="card-header">
-          <h5 className="mb-0">Hany eves jelenleg?</h5>
-        </div>
-        <div className="card-body d-flex justify-content-center">
-          <Datetime viewMode={'years'} timeFormat={false} input={false} onChange={this.dateChanged.bind(this)} ref="datetime" />
-        </div>
-        <div className="card-footer">
-            <button className="btn btn-block btn-light" onClick={this.reload.bind(this)}>
-              <h5 className="mb-0"><span className="badge badge-secondary">{this.state.y}</span> ev <span className="badge badge-secondary ml-2">{this.state.m}</span> honap <span className="badge badge-secondary ml-2">{this.state.d}</span> nap</h5>
-            </button>
-        </div>
+      <div className=''>
+        <Datetime viewMode={'years'} timeFormat={false} input={false} onChange={this.dateChanged.bind(this)} onViewModeChange={this.resetState.bind(this)} ref="datetime" />
+        {result &&
+        <div className={classes.row}>
+          <Chip
+            avatar={<Avatar className={classes.avatar}>{y.toString()}</Avatar>}
+            label="ev"
+            onClick={this.resetPicker.bind(this)}
+            className={classes.chip}
+          />
+          <Chip
+            avatar={<Avatar className={classes.avatar}>{m.toString()}</Avatar>}
+            label="honap"
+            onClick={this.resetPicker.bind(this)}
+            className={classes.chip}
+          />
+          <Chip
+            avatar={<Avatar className={classes.avatar}>{d.toString()}</Avatar>}
+            label="nap"
+            onClick={this.resetPicker.bind(this)}
+            className={classes.chip}
+          />
+        </div>}
       </div>
     )
   }
@@ -120,13 +115,10 @@ class AgeCalculator extends React.Component {
 }
 
 class BirthDateCalculator extends React.Component {
-  constructor({ match, location, history }) {
-    super()
-    this.state = {
-      year: 0,
-      month: 0,
-      date: moment().format('YYYY MMM DD')
-    }
+  state = {
+    year: 0,
+    month: 0,
+    date: moment().format('YYYY MMM DD')
   }
 
   yearInc() {
@@ -205,38 +197,121 @@ class BirthDateCalculator extends React.Component {
 
 }
 
-class Datumok extends React.Component {
+
+
+
+
+class Dates extends Component {
+  state = {
+    index: 0,
+  }
+
+  handleChange = (event, index) => {
+    this.setState({ index })
+  }
+
   render() {
+    const { classes } = this.props;
+    const { index } = this.state;
+
     return (
       <div>
-        <Jumbotron title='Datumok' />
-
-        <div className="container">
-          <div className="card-deck">
-            <AgeCalculator />
-            <BirthDateCalculator />
-          </div>
-        </div>
-
+        <Tabs value={index} onChange={this.handleChange} fullWidth>
+          <Tab label="Hany eves?" />
+          <Tab label="Mikor szuletett?" />
+        </Tabs>
+        {index === 0 && <AgeCalculator classes={classes} />}
+        {index === 1 && <div className={classes.content}>Item Two</div>}
       </div>
     );
   }
 }
+
+
+const styles = theme => {
+  console.log(theme)
+  return {
+  root: {
+    flexGrow: 1,
+    backgroundColor: '#eeeeee',
+    display: 'flex',
+    justifyContent: 'center',
+  },
+  container: {
+    marginTop: '20px',
+    width: 500,
+    display: 'block',
+  },
+  content: {
+    height: 400,
+    display: 'flex',
+    justifyContent: 'flex-start',
+    alignItems: 'stretch',
+    flexDirection: 'column',
+  },
+  button: {
+    margin: theme.spacing.unit,
+  },
+  chip: {
+    margin: theme.spacing.unit / 2,
+  },
+  avatar: {
+    color: '#fff',
+    backgroundColor: pink[500],
+  },
+  row: {
+    display: 'flex',
+    justifyContent: 'center',
+  }
+}};
 
 class App extends Component {
+  state = {
+    tabTarget: 'dates',
+  }
+
+  handleChange = (event, tabTarget) => {
+    this.setState({ tabTarget })
+    console.log(this.state)
+  }
+
   render() {
+    const { classes } = this.props;
+    const { tabTarget } = this.state;
+
     return (
       <div>
-        <Nav />
-        <Switch>
-          <Route path="/" exact component={Home}/>
-          <Route path="/szokereso" component={Szokereso}/>
-          <Route path="/dobokocka" component={Dobokocka}/>
-          <Route path="/datumok" component={Datumok}/>
-        </Switch>
+        <React.Fragment>
+          <CssBaseline />
+          <div className={classes.root}>
+            <Grid container spacing={24} justify="center" alignItems="stretch" className={classes.container}>
+              <Grid item>
+                <Paper>
+
+                  <div class={classes.content}>
+                    {tabTarget === 'dates' && <Dates classes={classes} />}
+                    {tabTarget === 'words' && <div>Item Two</div>}
+                    {tabTarget === 'dice' && <div>Item Three</div>}
+                  </div>
+
+                  <BottomNavigation value={tabTarget} onChange={this.handleChange} className={classes.navigation}>
+                    <BottomNavigationAction label={stringDatesTitle} value="dates" icon={<EventIcon />} />
+                    <BottomNavigationAction label={stringWordsTitle} value="words" icon={<FontDownloadIcon />} />
+                    <BottomNavigationAction label={stringDiceTitle} value="dice" icon={<CasinoIcon />} />
+                  </BottomNavigation>
+
+                </Paper>
+              </Grid>
+            </Grid>
+          </div>
+        </React.Fragment>
       </div>
     );
   }
 }
 
-export default App;
+App.propTypes = {
+  classes: PropTypes.object.isRequired,
+}
+
+export default withStyles(styles)(App);
