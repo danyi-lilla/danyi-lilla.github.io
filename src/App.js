@@ -1,62 +1,74 @@
 import React, { Component } from 'react';
-import { Route, Switch, Link, NavLink } from 'react-router-dom';
 import './App.css';
 import './Datetime.css';
 import Datetime from 'react-datetime';
 import moment from 'moment';
+import axios from 'axios';
 
 import AppBar from '@material-ui/core/AppBar';
 import Avatar from '@material-ui/core/Avatar';
 import BottomNavigation from '@material-ui/core/BottomNavigation';
 import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
 import Button from '@material-ui/core/Button';
-import CasinoIcon from '@material-ui/icons/Casino';
 import Chip from '@material-ui/core/Chip';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import EventIcon from '@material-ui/icons/Event';
-import FontDownloadIcon from '@material-ui/icons/FontDownload';
 import Grid from '@material-ui/core/Grid';
-import Icon from '@material-ui/core/Icon';
 import Paper from '@material-ui/core/Paper';
 import PropTypes from 'prop-types';
 import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import pink from '@material-ui/core/colors/pink';
-import blueGrey from '@material-ui/core/colors/blueGrey';
-import { withStyles  } from '@material-ui/core/styles';
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
+import { withStyles, withTheme } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Divider from '@material-ui/core/Divider';
-import InboxIcon from '@material-ui/icons/Inbox';
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import LinearProgress from '@material-ui/core/LinearProgress';
+import TextField from '@material-ui/core/TextField';
+
 import AddIcon from '@material-ui/icons/Add';
-import RemoveIcon from '@material-ui/icons/Remove';
+import CachedIcon from '@material-ui/icons/Cached';
+import CasinoIcon from '@material-ui/icons/Casino';
 import DraftsIcon from '@material-ui/icons/Drafts';
-import { MuiThemeProvider, createMuiTheme  } from '@material-ui/core/styles';
+import EventIcon from '@material-ui/icons/Event';
+import FontDownloadIcon from '@material-ui/icons/FontDownload';
+import IconButton from '@material-ui/core/IconButton';
+import InboxIcon from '@material-ui/icons/Inbox';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import MenuIcon from '@material-ui/icons/Menu';
+import RemoveIcon from '@material-ui/icons/Remove';
+import CheckIcon from '@material-ui/icons/Check';
+import SaveIcon from '@material-ui/icons/Save';
+import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
+
+const wordsURL = 'https://raw.githubusercontent.com/tiborsimon/words-hun/master/words/words.json.min'
 
 const theme = createMuiTheme({
   palette: {
     primary: {
-      light: '#757ce8',
-      main: '#880E4F',
-      dark: '#002884',
+      light: '#fa5788',
+      main: '#c2185b',
+      dark: '#8c0032',
       contrastText: '#fff',
     },
     secondary: {
-      light: '#ff7961',
-      main: '#f44336',
-      dark: '#ba000d',
-      contrastText: '#000',
+      light: '#fa5788',
+      main: '#c2185b',
+      dark: '#8c0032',
+      contrastText: '#fff',
     },
+    // secondary: {
+    //   light: '#5ddef4',
+    //   main: '#00acc1',
+    //   dark: '#007c91',
+    //   contrastText: '#000',
+    // },
   },
 });
-
 
 const stringTitle = 'Logotools'
 const stringDatesTitle = 'Datumok'
@@ -66,13 +78,6 @@ const stringDatesBirthCalcTitle = 'Mikor szuletett?'
 const stringWordsTitle = 'Szokereso'
 const stringDiceTitle = 'Dobokocka'
 
-
-
-
-
-
-
-
 class AgeCalculator extends Component {
   state = {
     y: 0,
@@ -81,12 +86,8 @@ class AgeCalculator extends Component {
     result: false
   }
 
-  resetPicker() {
+  reset() {
     this.refs.datetime.setState({currentView: 'years', selectedDate: undefined})
-    this.resetState()
-  }
-
-  resetState() {
     this.setState({
       y: 0,
       m: 0,
@@ -120,28 +121,28 @@ class AgeCalculator extends Component {
     const { y, m, d, result } = this.state
     return (
       <div className={classes.center}>
-        <Datetime viewMode={'years'} timeFormat={false} input={false} onChange={this.dateChanged.bind(this)} onViewModeChange={this.resetState.bind(this)} ref="datetime" />
-        {result &&
+        <Datetime viewMode={'years'} timeFormat={false} input={false} onChange={this.dateChanged.bind(this)} ref="datetime" />
         <div className={classes.row}>
           <Chip
             avatar={<Avatar className={classes.avatar}>{y.toString()}</Avatar>}
             label="ev"
-            onClick={this.resetPicker.bind(this)}
+            onClick={this.reset.bind(this)}
             className={classes.chip}
           />
           <Chip
             avatar={<Avatar className={classes.avatar}>{m.toString()}</Avatar>}
             label="honap"
-            onClick={this.resetPicker.bind(this)}
+            onClick={this.reset.bind(this)}
             className={classes.chip}
           />
           <Chip
             avatar={<Avatar className={classes.avatar}>{d.toString()}</Avatar>}
             label="nap"
-            onClick={this.resetPicker.bind(this)}
+            onClick={this.reset.bind(this)}
             className={classes.chip}
           />
-        </div>}
+        </div>
+      {result && <IconButton color='primary' onClick={this.reset.bind(this)}><CachedIcon /></IconButton>}
       </div>
     )
   }
@@ -204,21 +205,24 @@ class BirthCalculator extends React.Component {
 
   render() {
     const { classes } = this.props;
+    const { year, month } = this.state
+    const result = year > 0 || month > 0
     return (
       <div className={classes.center}>
         <div className={classes.birthContainer}>
           <div className={classes.birthRow}>
-            <Button className={classes.birthButton} onClick={this.yearInc.bind(this)}><AddIcon /></Button>
-            <Button className={classes.birthButton} variant="raised" color="primary">{this.state.year} eves</Button>
-            <Button className={classes.birthButton} onClick={this.yearDec.bind(this)}><RemoveIcon /></Button>
+            <Button className={classes.birthButton} variant="raised" onClick={this.yearInc.bind(this)}><AddIcon /></Button>
+            <Button className={classes.birthButton} variant="raised" color="primary">{year} eves</Button>
+            <Button className={classes.birthButton} variant="raised" onClick={this.yearDec.bind(this)}><RemoveIcon /></Button>
           </div>
           <div className={classes.birthRow}>
-            <Button className={classes.birthButton} onClick={this.monthInc.bind(this)}><AddIcon /></Button>
-            <Button className={classes.birthButton} variant="raised" color="primary">{this.state.month} honapos</Button>
-            <Button className={classes.birthButton} onClick={this.monthDec.bind(this)}><RemoveIcon /></Button>
+            <Button className={classes.birthButton} variant="raised" onClick={this.monthInc.bind(this)}><AddIcon /></Button>
+            <Button className={classes.birthButton} variant="raised" color="primary">{month} honapos</Button>
+            <Button className={classes.birthButton} variant="raised" onClick={this.monthDec.bind(this)}><RemoveIcon /></Button>
           </div>
         </div>
-        <Button color="disabled" size="large" className={classes.birthResult} onClick={this.reset.bind(this)}>{this.state.date}</Button>
+        <Button variant="raised" size="large" className={classes.birthResult} onClick={this.reset.bind(this)}>{this.state.date}</Button>
+      {result && <IconButton color='primary' onClick={this.reset.bind(this)}><CachedIcon /></IconButton>}
       </div>
     )
   }
@@ -253,87 +257,241 @@ class Dates extends Component {
 }
 
 
-const styles = theme => ({
-  root: {
-    flexGrow: 1,
-    backgroundColor: '#eeeeee',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'stretch',
-    height: '100%',
-  },
-  flex: {
-    flex: 1,
-  },
-  menuButton: {
-    marginLeft: -12,
-    marginRight: 20,
-  },
-  container: {
-    marginTop: 40,
-    [theme.breakpoints.down('xs')]: {
-      marginTop: 0,
+const styles = () => {
+  const contentHeight = window.innerHeight - 56*2
+  return {
+    root: {
+      flexGrow: 1,
+      backgroundColor: '#eeeeee',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'stretch',
+      height: '100%',
     },
-    width: 500,
-    height: '100%',
-    display: 'block',
+    flex: {
+      flex: 1,
+    },
+    menuButton: {
+      marginLeft: -12,
+      marginRight: 20,
+    },
+    container: {
+      marginTop: 40,
+      [theme.breakpoints.down('xs')]: {
+        marginTop: 0,
+      },
+      width: 500,
+      height: '100%',
+      display: 'block',
 
-  },
-  content: {
-    height: 400,
-    width: '100%',
-    display: 'flex',
-    justifyContent: 'flex-start',
-    alignItems: 'stretch',
-    flexDirection: 'column',
-  },
-  button: {
-    margin: theme.spacing.unit,
-  },
-  chip: {
-    margin: theme.spacing.unit / 2,
-  },
-  avatar: {
-    color: '#fff',
-    backgroundColor: pink[500],
-  },
-  row: {
-    display: 'flex',
-    justifyContent: 'center',
-  },
-  list: {
-    width: 250,
-  },
-  center: {
-    display: 'flex',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    flexDirection: 'column',
-    height: '100%'
-  },
-  birthContainer: {
-    display: 'flex',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    flexDirection: 'row',
-    height: '100%',
-    marginTop: 40,
-  },
-  birthRow: {
-    display: 'flex',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    flexDirection: 'column',
-    height: '100%',
-  },
-  birthButton: {
-    width: 150,
-  },
-  birthResult: {
-    width: 300,
-    marginTop: 20,
-  },
-})
+    },
+    content: {
+      height: 440,
+      [theme.breakpoints.down('xs')]: {
+        height: contentHeight,
+      },
+      width: '100%',
+      display: 'flex',
+      justifyContent: 'flex-start',
+      alignItems: 'stretch',
+      flexDirection: 'column',
+    },
+    button: {
+      margin: theme.spacing.unit,
+    },
+    chip: {
+      margin: theme.spacing.unit / 2,
+    },
+    avatar: {
+      color: '#fff',
+      backgroundColor: theme.palette.primary.main,
+    },
+    row: {
+      display: 'flex',
+      justifyContent: 'center',
+    },
+    list: {
+      width: 250,
+    },
+    center: {
+      display: 'flex',
+      justifyContent: 'space-around',
+      alignItems: 'center',
+      flexDirection: 'column',
+      height: '100%'
+    },
+    birthContainer: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      flexDirection: 'row',
+      height: '100%',
+      marginTop: 60,
+      width: 310,
+    },
+    birthRow: {
+      display: 'flex',
+      justifyContent: 'space-around',
+      alignItems: 'center',
+      flexDirection: 'column',
+      height: '100%',
+    },
+    birthButton: {
+      width: 150,
+    },
+    birthResult: {
+      width: 310,
+      marginTop: 10,
+    },
+    ageRefreshButton: {
+      width: 50,
+    },
+    textField: {
+      marginLeft: theme.spacing.unit,
+      marginRight: theme.spacing.unit,
+      width: 90,
+    },
+  }
+}
+
+class WordSearch extends Component {
+  state = {
+    first: '',
+    last: '',
+    inner: '',
+    len: '',
+    words: [],
+  }
+
+  handleChange = name => event => {
+    this.setState({
+      [name]: event.target.value,
+    });
+  };
+
+  select = word => {
+    console.log(word)
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.words !== this.state.words) {
+      this.setState({ words: nextProps.words });
+    }
+  }
+
+	render() {
+    const { first, last, inner, len, words } = this.state;
+    const { classes } = this.props;
+    console.log('imre')
+    console.log(words)
+    console.log(words)
+
+    return (
+      <div>
+        <TextField
+          id="first"
+          label="Kezdobetu"
+          className={classes.textField}
+          value={first}
+          onChange={this.handleChange('first')}
+          margin="normal"
+        />
+        <TextField
+          id="last"
+          label="Utolso betu"
+          className={classes.textField}
+          value={last}
+          onChange={this.handleChange('last')}
+          margin="normal"
+        />
+        <TextField
+          id="inner"
+          label="Belso betuk"
+          className={classes.textField}
+          value={inner}
+          onChange={this.handleChange('inner')}
+          margin="normal"
+        />
+        <TextField
+          id="len"
+          label="Hossz"
+          className={classes.textField}
+          value={len}
+          onChange={this.handleChange('len')}
+          margin="normal"
+        />
+
+        {words.forEach((word) => 
+          <Chip
+            label={word}
+            onDelete={this.select(word)}
+          />
+        )}
+      </div>
+    );
+  }
+}
+
+class Words extends Component {
+  state = {
+    initialized: false,
+    lastUpdated: null,
+    loading: false,
+    success: false,
+    words: [],
+  }
+
+  componentDidMount() {
+    if (localStorage.words) {
+      console.log('key found')
+      this.words = JSON.parse(localStorage.getItem('words'))
+    } else {
+      this.words = []
+      console.log('key not found')
+    }
+    this.loadWords()
+    console.log(this.words)
+  }
+
+  loadWords() {
+    this.setState({
+      loading: true,
+      success: false
+    })
+    this.request = axios.get(wordsURL)
+      .then(res => {
+        localStorage.setItem('words', JSON.stringify(res.data))
+        const updated = moment().format('YYYY MMM DD')
+        localStorage.setItem('wordsUpdated', updated)
+        this.setState({
+          initialized: true,
+          lastUpdated: updated,
+          loading: false,
+          success: false,
+          words: ['imre', 'bela', 'pista'],
+        }, ()=>{console.log('UPDATED!!!')})
+      })
+  }
+
+	render() {
+    const { loading, words } = this.state;
+    const { classes } = this.props;
+
+    console.log(this.state)
+
+    return (
+        <div className={classes.center}>
+          {!loading && <WordSearch classes={classes} words={words} />}
+          {loading && <CircularProgress />}
+        {words.map((word, index) => 
+          <Chip
+            label={word}
+          />
+        )}
+        </div>
+    );
+  }
+}
 
 class App extends Component {
   state = {
@@ -358,7 +516,6 @@ class App extends Component {
     return (
       <div>
         <React.Fragment>
-          <CssBaseline />
           <MuiThemeProvider theme={theme}>
             <div className={classes.root}>
 
@@ -416,7 +573,7 @@ class App extends Component {
 
                     <div className={classes.content}>
                       {tabTarget === 'dates' && <Dates classes={classes} />}
-                      {tabTarget === 'words' && <div>Item Two</div>}
+                      {tabTarget === 'words' && <Words classes={classes} />}
                       {tabTarget === 'dice' && <div>Item Three</div>}
                     </div>
 
@@ -441,4 +598,4 @@ App.propTypes = {
   classes: PropTypes.object.isRequired,
 }
 
-export default withStyles(styles)(App);
+export default withTheme(theme)(withStyles(styles)(App))
