@@ -1,37 +1,31 @@
 import React, { Component } from 'react';
 import './App.css';
 import './Datetime.css';
-import Datetime from 'react-datetime';
 import moment from 'moment';
 import axios from 'axios';
 
+import { hu as locale } from './locale.js';
+
+import Dates from './Dates.js'
+
 import AppBar from '@material-ui/core/AppBar';
-import Avatar from '@material-ui/core/Avatar';
 import BottomNavigation from '@material-ui/core/BottomNavigation';
 import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
-import Button from '@material-ui/core/Button';
 import Chip from '@material-ui/core/Chip';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
-import PropTypes from 'prop-types';
-import Tab from '@material-ui/core/Tab';
-import Tabs from '@material-ui/core/Tabs';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import { withStyles, withTheme } from '@material-ui/core/styles';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
-import Divider from '@material-ui/core/Divider';
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import LinearProgress from '@material-ui/core/LinearProgress';
+import Paper from '@material-ui/core/Paper';
+import PropTypes from 'prop-types';
 import TextField from '@material-ui/core/TextField';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 
-import AddIcon from '@material-ui/icons/Add';
-import CachedIcon from '@material-ui/icons/Cached';
 import CasinoIcon from '@material-ui/icons/Casino';
 import DraftsIcon from '@material-ui/icons/Drafts';
 import EventIcon from '@material-ui/icons/Event';
@@ -40,10 +34,6 @@ import IconButton from '@material-ui/core/IconButton';
 import InboxIcon from '@material-ui/icons/Inbox';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import MenuIcon from '@material-ui/icons/Menu';
-import RemoveIcon from '@material-ui/icons/Remove';
-import CheckIcon from '@material-ui/icons/Check';
-import SaveIcon from '@material-ui/icons/Save';
-import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
 
 const wordsURL = 'https://raw.githubusercontent.com/tiborsimon/words-hun/master/words/words.json.min'
 
@@ -70,204 +60,10 @@ const theme = createMuiTheme({
   },
 });
 
-const stringTitle = 'Logotools'
-const stringDatesTitle = 'Datumok'
-const stringDatesAgeCalcTitle = 'Hany eves?'
-const stringDatesBirthCalcTitle = 'Mikor szuletett?'
-
-const stringWordsTitle = 'Szokereso'
-const stringDiceTitle = 'Dobokocka'
-
-class AgeCalculator extends Component {
-  state = {
-    y: 0,
-    m: 0,
-    d: 0,
-    result: false
-  }
-
-  reset() {
-    this.refs.datetime.setState({currentView: 'years', selectedDate: undefined})
-    this.setState({
-      y: 0,
-      m: 0,
-      d: 0,
-      result: false
-    })
-  }
-
-  isValidDate(d) {
-    return d.isBefore(moment())
-  }
-
-  dateChanged(selected) {
-    let a = moment()
-    let b = moment(selected)
-    let y = a.diff(b, 'years')
-    b.add(y, 'years')
-    let m = a.diff(b, 'months')
-    b.add(m, 'months')
-    let d = a.diff(b, 'days')
-    this.setState({
-      y,
-      m,
-      d,
-      result: true
-    })
-  }
-
-  render() {
-    const { classes } = this.props;
-    const { y, m, d, result } = this.state
-    return (
-      <div className={classes.center}>
-        <Datetime viewMode={'years'} timeFormat={false} input={false} onChange={this.dateChanged.bind(this)} ref="datetime" />
-        <div className={classes.row}>
-          <Chip
-            avatar={<Avatar className={classes.avatar}>{y.toString()}</Avatar>}
-            label="ev"
-            onClick={this.reset.bind(this)}
-            className={classes.chip}
-          />
-          <Chip
-            avatar={<Avatar className={classes.avatar}>{m.toString()}</Avatar>}
-            label="honap"
-            onClick={this.reset.bind(this)}
-            className={classes.chip}
-          />
-          <Chip
-            avatar={<Avatar className={classes.avatar}>{d.toString()}</Avatar>}
-            label="nap"
-            onClick={this.reset.bind(this)}
-            className={classes.chip}
-          />
-        </div>
-      {result && <IconButton color='primary' onClick={this.reset.bind(this)}><CachedIcon /></IconButton>}
-      </div>
-    )
-  }
-
-}
-
-class BirthCalculator extends React.Component {
-  state = {
-    year: 0,
-    month: 0,
-    date: moment().format('YYYY MMM DD')
-  }
-
-  yearInc() {
-    this.setState({
-      year: this.state.year + 1
-    }, this.calculateDate)
-  }
-
-  yearDec() {
-    const current = this.state.year - 1
-    if (current >= 0) {
-      this.setState({
-        year: current
-      }, this.calculateDate)
-    }
-  }
-
-  monthInc() {
-    this.setState({
-      month: this.state.month + 1
-    }, this.calculateDate)
-  }
-
-  monthDec() {
-    const current = this.state.month - 1
-    if (current >= 0) {
-      this.setState({
-        month: current
-      }, this.calculateDate)
-    }
-  }
-
-  calculateDate() {
-    const now = moment()
-    now.subtract(this.state.year, 'years')
-    now.subtract(this.state.month, 'months')
-    this.setState({
-      date: now.format('YYYY MMM DD')
-    })
-  }
-
-  reset() {
-    this.setState({
-      year: 0,
-      month: 0,
-      date: moment().format('YYYY MMM DD')
-    })
-  }
-
-  render() {
-    const { classes } = this.props;
-    const { year, month } = this.state
-    const result = year > 0 || month > 0
-    return (
-      <div className={classes.center}>
-        <div className={classes.birthContainer}>
-          <div className={classes.birthRow}>
-            <Button className={classes.birthButton} variant="raised" onClick={this.yearInc.bind(this)}><AddIcon /></Button>
-            <Button className={classes.birthButton} variant="raised" color="primary">{year} eves</Button>
-            <Button className={classes.birthButton} variant="raised" onClick={this.yearDec.bind(this)}><RemoveIcon /></Button>
-          </div>
-          <div className={classes.birthRow}>
-            <Button className={classes.birthButton} variant="raised" onClick={this.monthInc.bind(this)}><AddIcon /></Button>
-            <Button className={classes.birthButton} variant="raised" color="primary">{month} honapos</Button>
-            <Button className={classes.birthButton} variant="raised" onClick={this.monthDec.bind(this)}><RemoveIcon /></Button>
-          </div>
-        </div>
-        <Button variant="raised" size="large" className={classes.birthResult} onClick={this.reset.bind(this)}>{this.state.date}</Button>
-      {result && <IconButton color='primary' onClick={this.reset.bind(this)}><CachedIcon /></IconButton>}
-      </div>
-    )
-  }
-
-}
-
-
-class Dates extends Component {
-  state = {
-    index: 0,
-  }
-
-  handleChange = (event, index) => {
-    this.setState({ index })
-  }
-
-  render() {
-    const { classes } = this.props;
-    const { index } = this.state;
-
-    return (
-      <div>
-        <Tabs value={index} onChange={this.handleChange} fullWidth>
-          <Tab label={stringDatesAgeCalcTitle} />
-          <Tab label={stringDatesBirthCalcTitle} />
-        </Tabs>
-        {index === 0 && <AgeCalculator classes={classes} />}
-        {index === 1 && <BirthCalculator classes={classes} />}
-      </div>
-    );
-  }
-}
-
 
 const styles = () => {
   const contentHeight = window.innerHeight - 56*2
   return {
-    root: {
-      flexGrow: 1,
-      backgroundColor: '#eeeeee',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'stretch',
-      height: '100%',
-    },
     flex: {
       flex: 1,
     },
@@ -318,14 +114,12 @@ const styles = () => {
       justifyContent: 'space-around',
       alignItems: 'center',
       flexDirection: 'column',
-      height: '100%'
     },
     birthContainer: {
       display: 'flex',
       justifyContent: 'space-between',
       alignItems: 'center',
       flexDirection: 'row',
-      height: '100%',
       marginTop: 60,
       width: 310,
     },
@@ -334,7 +128,6 @@ const styles = () => {
       justifyContent: 'space-around',
       alignItems: 'center',
       flexDirection: 'column',
-      height: '100%',
     },
     birthButton: {
       width: 150,
@@ -353,6 +146,7 @@ const styles = () => {
     },
   }
 }
+
 
 class WordSearch extends Component {
   state = {
@@ -493,9 +287,81 @@ class Words extends Component {
   }
 }
 
+
 class App extends Component {
   state = {
     tabTarget: 'dates',
+  }
+
+  handleChange = (event, tabTarget) => {
+    this.setState({ tabTarget })
+  }
+
+  render() {
+    const { classes } = this.props;
+    const { tabTarget } = this.state;
+
+    return (
+      <MuiThemeProvider theme={theme}>
+        <Paper className={classes.container}>
+
+          <Header classes={classes} />
+
+          <div className={classes.content}>
+            {tabTarget === 'dates' && <Dates classes={classes} />}
+            {tabTarget === 'words' && <Words classes={classes} />}
+            {tabTarget === 'dice' && <div>Item Three</div>}
+          </div>
+
+          <BottomNavigation value={tabTarget} onChange={this.handleChange} className={classes.navigation}>
+            <BottomNavigationAction label={locale.dates.title} value="dates" icon={<EventIcon />} />
+            <BottomNavigationAction label={locale.words.title} value="words" icon={<FontDownloadIcon />} />
+            <BottomNavigationAction label={locale.dice.title} value="dice" icon={<CasinoIcon />} />
+          </BottomNavigation>
+
+        </Paper>
+      </MuiThemeProvider>
+    );
+  }
+}
+
+
+class SideMenu extends Component {
+  render() {
+    const { classes } = this.props;
+
+    return (
+      <div className={classes.list}>
+        <List component="nav">
+          <ListItem button>
+            <ListItemIcon>
+              <InboxIcon />
+            </ListItemIcon>
+            <ListItemText primary="Inbox" />
+          </ListItem>
+          <ListItem button>
+            <ListItemIcon>
+              <DraftsIcon />
+            </ListItemIcon>
+            <ListItemText primary="Drafts" />
+          </ListItem>
+        </List>
+        <Divider />
+        <List component="nav">
+          <ListItem button>
+            <ListItemText primary="Trash" />
+          </ListItem>
+          <ListItem button component="a" href="#simple-list">
+            <ListItemText primary="Spam" />
+          </ListItem>
+        </List>
+      </div>
+    )
+  }
+}
+
+class Header extends Component {
+  state = {
     drawer: false
   }
 
@@ -505,92 +371,30 @@ class App extends Component {
     });
   };
 
-  handleChange = (event, tabTarget) => {
-    this.setState({ tabTarget })
-  }
-
   render() {
     const { classes } = this.props;
-    const { tabTarget, drawer } = this.state;
+    const { drawer } = this.state;
 
     return (
-      <div>
-        <React.Fragment>
-          <MuiThemeProvider theme={theme}>
-            <div className={classes.root}>
+      <React.Fragment>
+        <Drawer open={drawer} onClose={this.toggleDrawer(false)}>
+          <div tabIndex={0} role="button" onClick={this.toggleDrawer(false)} onKeyDown={this.toggleDrawer(false)}>
+            <SideMenu classes={classes} />
+          </div>
+        </Drawer>
 
-              <Drawer open={drawer} onClose={this.toggleDrawer(false)}>
-                <div
-                  tabIndex={0}
-                  role="button"
-                  onClick={this.toggleDrawer(false)}
-                  onKeyDown={this.toggleDrawer(false)}
-                >
-
-                  <div className={classes.list}>
-                    <List component="nav">
-                      <ListItem button>
-                        <ListItemIcon>
-                          <InboxIcon />
-                        </ListItemIcon>
-                        <ListItemText primary="Inbox" />
-                      </ListItem>
-                      <ListItem button>
-                        <ListItemIcon>
-                          <DraftsIcon />
-                        </ListItemIcon>
-                        <ListItemText primary="Drafts" />
-                      </ListItem>
-                    </List>
-                    <Divider />
-                    <List component="nav">
-                      <ListItem button>
-                        <ListItemText primary="Trash" />
-                      </ListItem>
-                      <ListItem button component="a" href="#simple-list">
-                        <ListItemText primary="Spam" />
-                      </ListItem>
-                    </List>
-                  </div>
-
-                </div>
-              </Drawer>
-
-              <Grid container justify="center" alignItems="stretch" className={classes.container}>
-                <Grid item>
-                  <Paper>
-
-                    <AppBar position="static" color='primary'>
-                      <Toolbar>
-                        <IconButton className={classes.menuButton} color="inherit" aria-label="Menu" onClick={this.toggleDrawer(true)}>
-                          <MenuIcon />
-                        </IconButton>
-                        <Typography variant="title" color="inherit" className={classes.flex}>
-                          {stringTitle}
-                        </Typography>
-                      </Toolbar>
-                    </AppBar>
-
-                    <div className={classes.content}>
-                      {tabTarget === 'dates' && <Dates classes={classes} />}
-                      {tabTarget === 'words' && <Words classes={classes} />}
-                      {tabTarget === 'dice' && <div>Item Three</div>}
-                    </div>
-
-                    <BottomNavigation value={tabTarget} onChange={this.handleChange} className={classes.navigation}>
-                      <BottomNavigationAction label={stringDatesTitle} value="dates" icon={<EventIcon />} />
-                      <BottomNavigationAction label={stringWordsTitle} value="words" icon={<FontDownloadIcon />} />
-                      <BottomNavigationAction label={stringDiceTitle} value="dice" icon={<CasinoIcon />} />
-                    </BottomNavigation>
-
-                  </Paper>
-                </Grid>
-              </Grid>
-            </div>
-          </MuiThemeProvider>
-        </React.Fragment>
-      </div>
-    );
+        <AppBar position="static" color='primary'>
+          <Toolbar>
+            <IconButton className={classes.menuButton} color="inherit" aria-label="Menu" onClick={this.toggleDrawer(true)}>
+              <MenuIcon />
+            </IconButton>
+            <Typography variant="title" color="inherit" className={classes.flex}>
+              {locale.app.title}
+            </Typography>
+          </Toolbar>
+        </AppBar>
+      </React.Fragment>
+    )
   }
 }
 
@@ -598,4 +402,4 @@ App.propTypes = {
   classes: PropTypes.object.isRequired,
 }
 
-export default withTheme(theme)(withStyles(styles)(App))
+export default withStyles(styles)(App)
