@@ -153,14 +153,14 @@ class BirthCalculator extends React.Component {
       <div className={classes.center}>
         <div className={classes.birthContainer}>
           <div className={classes.birthRow}>
-            <Button className={classes.birthButton} variant="raised" onClick={this.yearInc.bind(this)}><AddIcon /></Button>
-            <Button className={classes.birthButton} variant="raised" color="primary">{year} {locale.dates.birth.year}</Button>
-            <Button className={classes.birthButton} variant="raised" onClick={this.yearDec.bind(this)}><RemoveIcon /></Button>
+            <Button className={classes.birthButton} variant="raised" color="primary" onClick={this.yearInc.bind(this)}><AddIcon /></Button>
+            <Button className={classes.birthButton} variant="raised" color="default">{year} {locale.dates.birth.year}</Button>
+            <Button className={classes.birthButton} variant="raised" color="primary" onClick={this.yearDec.bind(this)}><RemoveIcon /></Button>
           </div>
           <div className={classes.birthRow}>
-            <Button className={classes.birthButton} variant="raised" onClick={this.monthInc.bind(this)}><AddIcon /></Button>
-            <Button className={classes.birthButton} variant="raised" color="primary">{month} {locale.dates.birth.month}</Button>
-            <Button className={classes.birthButton} variant="raised" onClick={this.monthDec.bind(this)}><RemoveIcon /></Button>
+            <Button className={classes.birthButton} variant="raised" color="primary" onClick={this.monthInc.bind(this)}><AddIcon /></Button>
+            <Button className={classes.birthButton} variant="raised" color="default">{month} {locale.dates.birth.month}</Button>
+            <Button className={classes.birthButton} variant="raised" color="primary" onClick={this.monthDec.bind(this)}><RemoveIcon /></Button>
           </div>
         </div>
         <Button variant="raised" size="large" className={classes.birthResult} onClick={this.reset.bind(this)}>{this.state.date}</Button>

@@ -7,6 +7,8 @@ import axios from 'axios';
 import { hu as locale } from './locale.js';
 
 import Dates from './Dates.js'
+import Words from './Words.js'
+import Dice from './Dice.js'
 
 import AppBar from '@material-ui/core/AppBar';
 import BottomNavigation from '@material-ui/core/BottomNavigation';
@@ -148,145 +150,6 @@ const styles = () => {
 }
 
 
-class WordSearch extends Component {
-  state = {
-    first: '',
-    last: '',
-    inner: '',
-    len: '',
-    words: [],
-  }
-
-  handleChange = name => event => {
-    this.setState({
-      [name]: event.target.value,
-    });
-  };
-
-  select = word => {
-    console.log(word)
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.words !== this.state.words) {
-      this.setState({ words: nextProps.words });
-    }
-  }
-
-	render() {
-    const { first, last, inner, len, words } = this.state;
-    const { classes } = this.props;
-    console.log('imre')
-    console.log(words)
-    console.log(words)
-
-    return (
-      <div>
-        <TextField
-          id="first"
-          label="Kezdobetu"
-          className={classes.textField}
-          value={first}
-          onChange={this.handleChange('first')}
-          margin="normal"
-        />
-        <TextField
-          id="last"
-          label="Utolso betu"
-          className={classes.textField}
-          value={last}
-          onChange={this.handleChange('last')}
-          margin="normal"
-        />
-        <TextField
-          id="inner"
-          label="Belso betuk"
-          className={classes.textField}
-          value={inner}
-          onChange={this.handleChange('inner')}
-          margin="normal"
-        />
-        <TextField
-          id="len"
-          label="Hossz"
-          className={classes.textField}
-          value={len}
-          onChange={this.handleChange('len')}
-          margin="normal"
-        />
-
-        {words.forEach((word) => 
-          <Chip
-            label={word}
-            onDelete={this.select(word)}
-          />
-        )}
-      </div>
-    );
-  }
-}
-
-class Words extends Component {
-  state = {
-    initialized: false,
-    lastUpdated: null,
-    loading: false,
-    success: false,
-    words: [],
-  }
-
-  componentDidMount() {
-    if (localStorage.words) {
-      console.log('key found')
-      this.words = JSON.parse(localStorage.getItem('words'))
-    } else {
-      this.words = []
-      console.log('key not found')
-    }
-    this.loadWords()
-    console.log(this.words)
-  }
-
-  loadWords() {
-    this.setState({
-      loading: true,
-      success: false
-    })
-    this.request = axios.get(wordsURL)
-      .then(res => {
-        localStorage.setItem('words', JSON.stringify(res.data))
-        const updated = moment().format('YYYY MMM DD')
-        localStorage.setItem('wordsUpdated', updated)
-        this.setState({
-          initialized: true,
-          lastUpdated: updated,
-          loading: false,
-          success: false,
-          words: ['imre', 'bela', 'pista'],
-        }, ()=>{console.log('UPDATED!!!')})
-      })
-  }
-
-	render() {
-    const { loading, words } = this.state;
-    const { classes } = this.props;
-
-    console.log(this.state)
-
-    return (
-        <div className={classes.center}>
-          {!loading && <WordSearch classes={classes} words={words} />}
-          {loading && <CircularProgress />}
-        {words.map((word, index) => 
-          <Chip
-            label={word}
-          />
-        )}
-        </div>
-    );
-  }
-}
-
 
 class App extends Component {
   state = {
@@ -298,7 +161,7 @@ class App extends Component {
   }
 
   render() {
-    const { classes } = this.props;
+    const { classes, searchEngine } = this.props;
     const { tabTarget } = this.state;
 
     return (
@@ -309,8 +172,8 @@ class App extends Component {
 
           <div className={classes.content}>
             {tabTarget === 'dates' && <Dates classes={classes} />}
-            {tabTarget === 'words' && <Words classes={classes} />}
-            {tabTarget === 'dice' && <div>Item Three</div>}
+            {tabTarget === 'words' && <Words classes={classes} searchEngine={searchEngine} />}
+            {tabTarget === 'dice' && <Dice />}
           </div>
 
           <BottomNavigation value={tabTarget} onChange={this.handleChange} className={classes.navigation}>
