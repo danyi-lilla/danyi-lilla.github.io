@@ -28,7 +28,7 @@ class AgeCalculator extends Component {
     result: false
   }
 
-  reset() {
+  reset = () => {
     this.refs.datetime.setState({currentView: 'years', selectedDate: undefined})
     this.setState({
       year: 0,
@@ -38,11 +38,11 @@ class AgeCalculator extends Component {
     })
   }
 
-  isValidDate(d) {
+  isValidDate = (d) => {
     return d.isBefore(moment())
   }
 
-  dateChanged(selected) {
+  dateChanged = (selected) => {
     let a = moment()
     let b = moment(selected)
     let year = a.diff(b, 'years')
@@ -63,28 +63,28 @@ class AgeCalculator extends Component {
     const { year, month, day, result } = this.state
     return (
       <div className={classes.center}>
-        <Datetime viewMode={'years'} timeFormat={false} input={false} onChange={this.dateChanged.bind(this)} ref="datetime" />
+        <Datetime viewMode={'years'} timeFormat={false} input={false} onChange={this.dateChanged} ref="datetime" />
         <div className={classes.row}>
           <Chip
             avatar={<Avatar className={classes.avatar}>{year.toString()}</Avatar>}
             label={locale.dates.age.year}
-            onClick={this.reset.bind(this)}
+            onClick={this.reset}
             className={classes.chip}
           />
           <Chip
             avatar={<Avatar className={classes.avatar}>{month.toString()}</Avatar>}
             label={locale.dates.age.month}
-            onClick={this.reset.bind(this)}
+            onClick={this.reset}
             className={classes.chip}
           />
           <Chip
             avatar={<Avatar className={classes.avatar}>{day.toString()}</Avatar>}
             label={locale.dates.age.day}
-            onClick={this.reset.bind(this)}
+            onClick={this.reset}
             className={classes.chip}
           />
         </div>
-      {result && <IconButton color='primary' onClick={this.reset.bind(this)}><CachedIcon /></IconButton>}
+      {result && <IconButton color='primary' onClick={this.reset}><CachedIcon /></IconButton>}
       </div>
     )
   }
@@ -98,13 +98,13 @@ class BirthCalculator extends React.Component {
     date: moment().format(locale.dates.format)
   }
 
-  yearInc() {
+  yearInc = () => {
     this.setState({
       year: this.state.year + 1
     }, this.calculateDate)
   }
 
-  yearDec() {
+  yearDec = () => {
     const current = this.state.year - 1
     if (current >= 0) {
       this.setState({
@@ -113,13 +113,13 @@ class BirthCalculator extends React.Component {
     }
   }
 
-  monthInc() {
+  monthInc = () => {
     this.setState({
       month: this.state.month + 1
     }, this.calculateDate)
   }
 
-  monthDec() {
+  monthDec = () => {
     const current = this.state.month - 1
     if (current >= 0) {
       this.setState({
@@ -128,7 +128,7 @@ class BirthCalculator extends React.Component {
     }
   }
 
-  calculateDate() {
+  calculateDate = () => {
     const now = moment()
     now.subtract(this.state.year, 'years')
     now.subtract(this.state.month, 'months')
@@ -137,7 +137,7 @@ class BirthCalculator extends React.Component {
     })
   }
 
-  reset() {
+  reset = () => {
     this.setState({
       year: 0,
       month: 0,
@@ -153,18 +153,18 @@ class BirthCalculator extends React.Component {
       <div className={classes.center}>
         <div className={classes.birthContainer}>
           <div className={classes.birthRow}>
-            <Button className={classes.birthButton} variant="raised" color="primary" onClick={this.yearInc.bind(this)}><AddIcon /></Button>
+            <Button className={classes.birthButton} variant="raised" color="primary" onClick={this.yearInc}><AddIcon /></Button>
             <Button className={classes.birthButton} variant="raised" color="default">{year} {locale.dates.birth.year}</Button>
-            <Button className={classes.birthButton} variant="raised" color="primary" onClick={this.yearDec.bind(this)}><RemoveIcon /></Button>
+            <Button className={classes.birthButton} variant="raised" color="primary" onClick={this.yearDec}><RemoveIcon /></Button>
           </div>
           <div className={classes.birthRow}>
-            <Button className={classes.birthButton} variant="raised" color="primary" onClick={this.monthInc.bind(this)}><AddIcon /></Button>
+            <Button className={classes.birthButton} variant="raised" color="primary" onClick={this.monthInc}><AddIcon /></Button>
             <Button className={classes.birthButton} variant="raised" color="default">{month} {locale.dates.birth.month}</Button>
-            <Button className={classes.birthButton} variant="raised" color="primary" onClick={this.monthDec.bind(this)}><RemoveIcon /></Button>
+            <Button className={classes.birthButton} variant="raised" color="primary" onClick={this.monthDec}><RemoveIcon /></Button>
           </div>
         </div>
-        <Button variant="raised" size="large" className={classes.birthResult} onClick={this.reset.bind(this)}>{this.state.date}</Button>
-      {result && <IconButton color='primary' onClick={this.reset.bind(this)}><CachedIcon /></IconButton>}
+        <Button variant="raised" size="large" className={classes.birthResult} onClick={this.reset}>{this.state.date}</Button>
+      {result && <IconButton color='primary' onClick={this.reset}><CachedIcon /></IconButton>}
       </div>
     )
   }

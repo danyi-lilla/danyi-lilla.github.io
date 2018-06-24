@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
 import './Datetime.css';
-import moment from 'moment';
-import axios from 'axios';
 
 import { hu as locale } from './locale.js';
 
@@ -13,31 +11,27 @@ import Dice from './Dice.js'
 import AppBar from '@material-ui/core/AppBar';
 import BottomNavigation from '@material-ui/core/BottomNavigation';
 import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
-import Chip from '@material-ui/core/Chip';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Paper from '@material-ui/core/Paper';
 import PropTypes from 'prop-types';
-import TextField from '@material-ui/core/TextField';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import { withStyles } from '@material-ui/core/styles';
 
+import ExpansionPanel from '@material-ui/core/ExpansionPanel';
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+
 import CasinoIcon from '@material-ui/icons/Casino';
-import DraftsIcon from '@material-ui/icons/Drafts';
 import EventIcon from '@material-ui/icons/Event';
 import FontDownloadIcon from '@material-ui/icons/FontDownload';
 import IconButton from '@material-ui/core/IconButton';
-import InboxIcon from '@material-ui/icons/Inbox';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
 import MenuIcon from '@material-ui/icons/Menu';
-
-const wordsURL = 'https://raw.githubusercontent.com/tiborsimon/words-hun/master/words/words.json.min'
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 const theme = createMuiTheme({
   palette: {
@@ -53,12 +47,6 @@ const theme = createMuiTheme({
       dark: '#8c0032',
       contrastText: '#fff',
     },
-    // secondary: {
-    //   light: '#5ddef4',
-    //   main: '#00acc1',
-    //   dark: '#007c91',
-    //   contrastText: '#000',
-    // },
   },
 });
 
@@ -82,6 +70,10 @@ const styles = () => {
       height: '100%',
       display: 'block',
 
+    },
+    heading: {
+      fontSize: theme.typography.pxToRem(15),
+      fontWeight: theme.typography.fontWeightRegular,
     },
     content: {
       height: 440,
@@ -109,7 +101,9 @@ const styles = () => {
       justifyContent: 'center',
     },
     list: {
-      width: 250,
+      width: 276,
+      height: '100%',
+      background: '#eeeeee',
     },
     center: {
       display: 'flex',
@@ -190,34 +184,72 @@ class App extends Component {
 
 
 class SideMenu extends Component {
+  style = {
+    help: {
+      borderTop: "1px solid #ddd",
+      background: 'white',
+      boxShadow: '0px 1px 3px 0px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12)'
+    },
+    footer: {
+      wrapper: {
+        margin: 18,
+        textAlign: 'center',
+      },
+      entry: {
+        opacity: 0.5,
+      }
+    }
+
+  }
+
   render() {
     const { classes } = this.props;
 
     return (
       <div className={classes.list}>
-        <List component="nav">
+
+        <List style={this.style.help} component="nav">
           <ListItem button>
-            <ListItemIcon>
-              <InboxIcon />
-            </ListItemIcon>
-            <ListItemText primary="Inbox" />
-          </ListItem>
-          <ListItem button>
-            <ListItemIcon>
-              <DraftsIcon />
-            </ListItemIcon>
-            <ListItemText primary="Drafts" />
+            <ListItemText primary={locale.help.title} />
           </ListItem>
         </List>
-        <Divider />
-        <List component="nav">
-          <ListItem button>
-            <ListItemText primary="Trash" />
-          </ListItem>
-          <ListItem button component="a" href="#simple-list">
-            <ListItemText primary="Spam" />
-          </ListItem>
-        </List>
+
+        <ExpansionPanel>
+          <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+            <Typography className={classes.heading}>{locale.dates.help.title}</Typography>
+          </ExpansionPanelSummary>
+          <ExpansionPanelDetails>
+            <Typography dangerouslySetInnerHTML={locale.dates.help.content}></Typography>
+          </ExpansionPanelDetails>
+        </ExpansionPanel>
+
+        <ExpansionPanel>
+          <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+            <Typography className={classes.heading}>{locale.words.help.title}</Typography>
+          </ExpansionPanelSummary>
+          <ExpansionPanelDetails>
+            <Typography dangerouslySetInnerHTML={locale.words.help.content}></Typography>
+          </ExpansionPanelDetails>
+        </ExpansionPanel>
+
+        <ExpansionPanel>
+          <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+            <Typography className={classes.heading}>{locale.dice.help.title}</Typography>
+          </ExpansionPanelSummary>
+          <ExpansionPanelDetails>
+            <Typography dangerouslySetInnerHTML={locale.dice.help.content}></Typography>
+          </ExpansionPanelDetails>
+        </ExpansionPanel>
+
+        <div style={this.style.footer.wrapper}>
+          <Typography style={this.style.footer.entry}>Simon Tibor &copy; 2018</Typography>
+          <Typography style={this.style.footer.entry}>{locale.help.footer.version}</Typography>
+          <hr style={this.style.footer.entry} />
+          <Typography style={this.style.footer.entry}>{locale.help.footer.legal}</Typography>
+          <br />
+          <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/hu/"><img alt="Creative Commons Licenc" style={{borderWidth: 0}} src="https://i.creativecommons.org/l/by-nc-sa/2.5/hu/88x31.png" /></a>
+        </div>
+
       </div>
     )
   }
@@ -241,9 +273,7 @@ class Header extends Component {
     return (
       <React.Fragment>
         <Drawer open={drawer} onClose={this.toggleDrawer(false)}>
-          <div tabIndex={0} role="button" onClick={this.toggleDrawer(false)} onKeyDown={this.toggleDrawer(false)}>
-            <SideMenu classes={classes} />
-          </div>
+          <SideMenu classes={classes} />
         </Drawer>
 
         <AppBar position="static" color='primary'>

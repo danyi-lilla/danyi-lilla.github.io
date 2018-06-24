@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import { hu as locale } from './locale.js';
-import getRenderedSize from 'react-rendered-size';
+import FileSaver from 'file-saver';
 
 import Chip from '@material-ui/core/Chip';
 import TextField from '@material-ui/core/TextField';
@@ -12,20 +12,11 @@ import Tabs from '@material-ui/core/Tabs';
 
 import KeyboardArrowLeftIcon from '@material-ui/icons/KeyboardArrowLeft'
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight'
+
 import AddCircleIcon from '@material-ui/icons/AddCircle'
 import RemoveCircleIcon from '@material-ui/icons/RemoveCircle'
 import AddIcon from '@material-ui/icons/Add';
 import RemoveIcon from '@material-ui/icons/Remove';
-
-
-import SpeedDial from '@material-ui/lab/SpeedDial';
-import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon';
-import SpeedDialAction from '@material-ui/lab/SpeedDialAction';
-import ContentCopyIcon from '@material-ui/icons/ContentCopy';
-import SaveIcon from '@material-ui/icons/Save';
-import PrintIcon from '@material-ui/icons/Print';
-import ShareIcon from '@material-ui/icons/Share';
-import DeleteIcon from '@material-ui/icons/Delete';
 
 
 class SearchControls extends Component {
@@ -84,11 +75,11 @@ class SearchControls extends Component {
   
   handleChange = name => event => {
     let value = null
-    if (name == 'first' || name == 'last') {
+    if (name === 'first' || name === 'last') {
       value = event.target.value.toLowerCase()
     }
 
-    if (name == 'inner') {
+    if (name === 'inner') {
       value = event.target.value.toLowerCase()
     }
 
@@ -122,7 +113,6 @@ class SearchControls extends Component {
   }
 
   increaseLength = () => {
-    const len = this.state.len
     this.setState({
       len: this.state.len + 1
     })
@@ -164,7 +154,7 @@ class SearchControls extends Component {
         <div style={this.style.inputs.wrapper}>
           <TextField
             id="first"
-            label="Kezdobetu"
+            label={locale.words.search.inputs.start}
             style={this.style.inputs.textField}
             value={first}
             onChange={this.handleChange('first')}
@@ -172,7 +162,7 @@ class SearchControls extends Component {
           />
           <TextField
             id="inner"
-            label="Belso betuk"
+            label={locale.words.search.inputs.inner}
             style={this.style.inputs.textField}
             value={inner}
             onChange={this.handleChange('inner')}
@@ -180,7 +170,7 @@ class SearchControls extends Component {
           />
           <TextField
             id="last"
-            label="Utolso betu"
+            label={locale.words.search.inputs.end}
             style={this.style.inputs.textField}
             value={last}
             onChange={this.handleChange('last')}
@@ -232,8 +222,23 @@ class Paginator extends Component {
       item: {
         margin: '0 3px 5px 0',
       },
+      selected: {
+        margin: '0 3px 5px 0',
+        backgroundColor: '#c2185b',
+        color: 'white',
+      },
     },
 
+  }
+
+  componentDidMount() {
+    this.props.registerReset(this.reset)
+  }
+
+  reset = () => {
+      this.setState({
+        current: 0
+      })
   }
 
   prev = () => {
@@ -249,9 +254,6 @@ class Paginator extends Component {
   componentDidUpdate = (prevProps) => {
     if (this.props.items !== prevProps.items) {
       console.log('items updated')
-      this.setState({
-        current: 0
-      })
     }
   }
 
@@ -264,48 +266,19 @@ class Paginator extends Component {
         current: current + 1
       })
     }
-
-    const { icon } = this.props;
-
-    const pagerCurrent = current + 1
-    const pagerAll = Math.ceil(items.length/displayCount)
-    const currentItems = items.slice(current * displayCount, (current + 1) * displayCount)
-
-    const size = getRenderedSize(
-        <div style={{width: 480}}>
-
-          <div style={this.style.nav.wrapper}>
-            <Button style={this.style.nav.pusher} variant="raised" color="primary" onClick={this.prev}><KeyboardArrowLeftIcon /></Button>
-            <Button style={this.style.nav.display} variant="raised">{pagerCurrent} / {pagerAll}</Button>
-            <Button style={this.style.nav.pusher} variant="raised" color="primary" onClick={this.next}><KeyboardArrowRightIcon /></Button>
-          </div>
-
-          <div style={this.style.items.wrapper}>
-            {currentItems.map(item => (
-              <Chip
-                style={this.style.items.item}
-                label={item}
-                key={item}
-                onDelete={this.selectItem(item)}
-                onClick={this.selectItem(item)}
-                deleteIcon={icon}
-              />
-            ))}
-          </div>
-
-        </div>
-    );
-
-    console.log(size)
   }
 
   selectItem = item => event => {
-    this.props.select(item)
+    if (item.selected) {
+      this.props.remove(item.word)
+    } else {
+      this.props.select(item.word)
+    }
   };
 
 	render() {
     const { current } = this.state;
-    const { items, icon, displayCount } = this.props;
+    const { items, displayCount, colorizeCollection } = this.props;
 
     const pagerCurrent = current + 1
     const pagerAll = Math.ceil(items.length/displayCount)
@@ -323,12 +296,12 @@ class Paginator extends Component {
           <div style={this.style.items.wrapper}>
             {currentItems.map(item => (
               <Chip
-                style={this.style.items.item}
-                label={item}
-                key={item}
+                style={item.selected && colorizeCollection ? this.style.items.selected : this.style.items.item}
+                label={item.word}
+                key={item.word}
                 onDelete={this.selectItem(item)}
                 onClick={this.selectItem(item)}
-                deleteIcon={icon}
+                deleteIcon={item.selected ? <RemoveCircleIcon /> : <AddCircleIcon />}
               />
             ))}
           </div>
@@ -338,13 +311,21 @@ class Paginator extends Component {
   }
 }
 
+
 class Search extends Component {
+  reset = () => {}
+
   search = (spec) => {
     this.props.search(spec)
+    this.reset()
+  }
+
+  registerReset = (callback) => {
+    this.reset = callback
   }
 
 	render() {
-    const { select, items } = this.props;
+    const { select, remove, items } = this.props;
 
     return (
       <div>
@@ -355,7 +336,10 @@ class Search extends Component {
           displayCount={10}
           items={items}
           select={select}
+          remove={remove}
+          registerReset={this.registerReset}
           icon={<AddCircleIcon />}
+          colorizeCollection={true}
         />
       </div>
     );
@@ -363,16 +347,44 @@ class Search extends Component {
 }
 
 class Collection extends Component {
+  style = {
+    wrapper: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      marginTop: 10,
+      marginBottom: 10,
+      marginLeft: 'auto',
+      marginRight: 'auto',
+      width: 310,
+    },
+    button: {
+      width: 310,
+    },
+  }
+
+  save = () => {
+    let words = this.props.items.map((item)=>item.word)
+
+    let file = new File([words.join("\n")], "szolista.txt", {type: "text/plain;charset=utf-8"});
+    FileSaver.saveAs(file);
+  }
+  
 	render() {
-    const { remove, items } = this.props;
+    const { select, remove, items } = this.props;
 
     return (
       <div>
+        <div style={this.style.wrapper}>
+          <Button style={this.style.button} variant="raised" color="primary" onClick={this.save}>{locale.words.collection.save}</Button>
+        </div>
         <Paginator
           displayCount={20}
           items={items}
-          select={remove}
+          select={select}
+          remove={remove}
           icon={<RemoveCircleIcon />}
+          registerReset={()=>{}}
+          colorizeCollection={false}
         />
       </div>
     );
@@ -404,22 +416,23 @@ class Words extends Component {
   }
 
   select = (word) => {
+    this.props.searchEngine.select(word)
     this.setState({
-      collection: this.props.searchEngine.select(word),
+      collection: this.props.searchEngine.getCollection(),
       words: this.props.searchEngine.getResult()
     })
   }
 
   remove = (word) => {
+    this.props.searchEngine.remove(word)
     this.setState({
-      collection: this.props.searchEngine.remove(word),
+      collection: this.props.searchEngine.getCollection(),
       words: this.props.searchEngine.getResult()
     })
   }
 
 	render() {
     const { index, words, collection } = this.state;
-    const { searchEngine } = this.props;
 
     return (
       <React.Fragment>
@@ -431,6 +444,7 @@ class Words extends Component {
                           items={words}
                           search={this.search}
                           select={this.select} 
+                          remove={this.remove} 
                         />}
         {index === 1 && <Collection
                           items={collection}
